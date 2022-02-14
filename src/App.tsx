@@ -1,24 +1,19 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Header from './components/Header';
+import Table from './components/Table';
+import useFetch from './components/useFetch';
+import Search from './components/Search';
 
 function App() {
+  const data = useFetch()
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='bg-background min-h-screen'>
+      <Header />
+      <div className='mt-16 container mx-auto px-4 flex justify-center items-center min-h-fit '>
+        <div>
+          <Search />
+          {data && <Table data={data} />}
+        </div>
+      </div>
     </div>
   );
 }
