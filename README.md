@@ -1,4 +1,4 @@
-# A Dashboard Table build with React
+# A Dashboard Table built with React
 * Create react app
 * React hooks
 * Custom hooks 
@@ -29,7 +29,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 Or you can run with Docker Compose
 ### `docker compose up`
-
 
 
 
