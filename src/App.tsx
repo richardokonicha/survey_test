@@ -1,3 +1,4 @@
+// App Main component
 import Header from './components/Header';
 import Table from './components/Table';
 import useFetch from './components/useFetch';

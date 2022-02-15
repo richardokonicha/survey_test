@@ -1,5 +1,6 @@
 
 // A custom hook that fetches data from the API and performs a search and filter operation
+// Isolate the state and logic of the component in a custom hook for a cleaner design
 
 import { useEffect, useState } from "react"
 
