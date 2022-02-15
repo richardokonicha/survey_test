@@ -3,7 +3,7 @@
 interface DataProps {
     count: number
     count_nolimit: number
-    items: any[]
+    items: ItemProps[]
     total: number
 }
 
@@ -15,7 +15,6 @@ interface ItemProps {
     browser: BrowserProps
     computed_browser: ComputedBrowserProps
 }
-
 
 interface BrowserProps {
     appCodeName: string
@@ -33,10 +32,19 @@ interface ComputedBrowserProps {
 }
 
 
-// create a new type HTMLElementEvent that has a target of type you pass
-// type T must be a HTMLElement (e.g. HTMLTextAreaElement extends HTMLElement)
-type HTMLElementEvent<T extends MouseEvent> = Event & {
+// create a new type from MouseEvent html button element that has a target of type you pass
+type ClickRatingEvent<T extends Record> = MouseEvent<HTMLButtonElement, MouseEvent> & {
     target: T;
     // probably you might want to add the currentTarget as well
     // currentTarget: T;
+}
+
+interface Target {
+    value: string
+}
+
+interface SearchProps {
+    setSearchValue: React.Dispatch<React.SetStateAction<string>>,
+    setRatingFilter: React.Dispatch<React.SetStateAction<string[]>>,
+    ratingFilter: string[]
 }

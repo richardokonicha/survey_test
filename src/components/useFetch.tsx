@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 
 const useFetch = () => {
     const [rawData, setRawData] = useState<DataProps | null>(null)
-    const [search, setSearchValue] = useState('')
+    const [search, setSearchValue] = useState<string>('')
     const [ratingFilter, setRatingFilter] = useState<string[]>([1, 2, 3, 4, 5].map(i => i.toString()))
 
 

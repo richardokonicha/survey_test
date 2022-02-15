@@ -1,7 +1,8 @@
 // The search and filter components html and tailwind
 
-const Search = ({ setSearchValue, setRatingFilter, ratingFilter }: { setSearchValue: any, setRatingFilter: any, ratingFilter: string[] }) => {
-    const handleRatings = (e: any) => {
+
+const Search = ({ setSearchValue, setRatingFilter, ratingFilter }: SearchProps) => {
+    const handleRatings = (e: ClickRatingEvent<Target>) => {
         let value = e.target.value
         if (ratingFilter.includes(value) === true) {
             setRatingFilter(ratingFilter.filter((i: string) => i !== value))
