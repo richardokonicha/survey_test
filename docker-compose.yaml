@@ -4,7 +4,7 @@ services:
     container_name: survey-monkey-test
     image: survey-monkey-test
     build:
-      context: ./
+      context: .
       dockerfile: Dockerfile
     volumes:
       - ./src:/app/src

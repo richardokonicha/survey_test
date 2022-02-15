@@ -13,11 +13,11 @@ const Search = ({ setSearchValue, setRatingFilter, ratingFilter }: SearchProps) 
     return (
         <div className='flex'>
             <input type="text"
-                className=" mr-8  w-48 pl-10 p-1.5 bg-white border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-primary focus:border-primary block appearance-none leading-normal"
+                className=" mr-8  sm:w-48 sm:pl-10 p-1.5 bg-white border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-primary focus:border-primary block appearance-none leading-normal"
                 placeholder="Search here!"
                 onChange={(e) => setSearchValue(e.target.value)}
             ></input>
-            <div className="flex items-center space-x-3 font-xs">
+            <div className="flex items-center sm:space-x-3 space-x-1 font-xs">
                 {
                     ['1', '2', '3', '4', '5'].map((item: string, index: number) => (
                         <button
