@@ -1,6 +1,5 @@
 // A tailwind configuration file to configure and extend the default theme.
 
-
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",

@@ -1,6 +1,15 @@
-# Getting Started with Create React App
+# A Dashboard Table build with React
+* Create react app
+* React hooks
+* Custom hooks 
+* Typescript
+* Tailwind CSS 
+* React testing library
+* Mock Service Worker (mock testing)
+* Docker
+* Docker compose
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was a test 
 
 ## Available Scripts
 
@@ -11,36 +20,65 @@ In the project directory, you can run:
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
-### `yarn test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Or you can run with Docker Compose
+### `docker compose up`
 
-### `yarn build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `yarn eject`
+####.................................................................................................................
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Front-end Assignment
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Hi there, thanks for taking the time to show us your skills!
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+By stepping up to this challenge, you give us a chance to see if and how you would fit in with the team technically.
 
-## Learn More
+We leave a lot of things in this challenge up to you and that is by design; if it's not specifically mentioned, feel free to pick and choose and inform us about those choices.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## The challenge
+Create a web application that meets the following criteria and conforms to the [design specs](https://www.figma.com/file/LcKSjMQAOOnJWdvjQd2QQY/Front-End-Assignment?node-id=2%3A2).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+It should feature the following:
+- Implement this exact design to the detail.
+- Fetch this JSON file https://cache.usabilla.com/example/apidemo.json.
+- Display the feedback items in a list.
+- Use comment and rating filters to filter feedback items.
+- Write unit tests.
+- Make the application as responsive as possible for mobile phones, tablets, and desktops.
+- Do something creative with the extra data provided in the JSON file.
+
+## What do we expect from you
+- A JavaScript (ES6) or TypeScript application, using ReactJS as the component library.
+- A working Webpack pipeline that lets us compile and test the code.
+- A written README.md with instructions on how to run your test environment, as well as an explanation on how/why did you design things the way you did.
+- **Bonus**: A `docker-compose.yaml` file that lets us spin up a test environment without needing to compile anything.
+
+## What are we evaluating
+You have all the freedom in the world to solve the challenge as you see fit. We'll not judge you on the choice of framework, serialization library, etc but we will be on the lookout for a few things:
+
+- Your approach to problem solving in general, as well as your attention to the guidelines and specifications.
+- Clean and expressive React code, with object-oriented design practices; specifically how clean and organized is your code and how flexible/mature your design looks like.
+- Clarity in the decisions and tradeoffs you've made, and how deliberate they feel.
+- How do you approach testing and the quality of the tests.
+- Your approach towards best practices, coding standards and use of versioning.
+- What kind of dependencies you bring into the project, and how do you justify their use.
+
+## Time constraints
+Implementing the whole project should not take more than a work day. If the time is not enough, feel free to take productivity shortcuts (but please, explain them).
+
+That being said, we understand that sometimes personal constraints can prevent you from giving the adequate focus, so we ask that you keep us updated if you need more time to work on your assignment.
+
+## How to deliver the project
+You will be given access to this private repository. **As soon as you start working, you should create a commit** replacing this `README.md` with a new file, containing your name and the date and time you started working.
+
+Once you're finished with the work, you're to **tag the final commit with v1.0.0, and let our recruitment team know**.
+
+## What if I have questions?
+You're welcome to ask questions and clarify requirements with us! For that, you can use the **Issues** tab on GitHub to create a new issue. Make sure to tag @reviewers-fe so we get notified! We'll try to respond to your issue within 1 working day!
+
+Good luck! :) We are looking forward to seeing your results!

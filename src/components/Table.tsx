@@ -5,7 +5,7 @@ const Table = ({ data }: { data: ItemProps[] }) => {
         <div className="antialiased shadow-table sm:rounded-md min-w-full mt-6 overflow-x-scroll sm:max-h-[26rem] max-h-[36rem] cursor-pointer font-halyard font-light hover:shadow-lg" >
             <table className=" min-w-full rounded-md collapse overflow-hidden sm:table table" >
                 <thead className="bg-primary sticky top-0 ">
-                    <tr className="">
+                    <tr className="" >
                         <th scope="col" className=" py-4 px-8 text-xs font-bold tracking-wider text-left text-white font-halyard ">
                             Rating
                         </th>

@@ -9,7 +9,6 @@ interface DataProps {
 
 interface ItemProps {
     id: string
-    email: string
     comment: string
     rating: string
     browser: BrowserProps
@@ -17,17 +16,12 @@ interface ItemProps {
 }
 
 interface BrowserProps {
-    appCodeName: string
-    appName: string
     platform: string
-    vendor: string
-    product: string
 }
 
 interface ComputedBrowserProps {
     Browser: string
     Platform: string
-    Vendor: string
     Version: string
 }
 
