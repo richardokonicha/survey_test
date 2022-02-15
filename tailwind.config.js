@@ -1,5 +1,7 @@
 // A tailwind configuration file to configure and extend the default theme.
 
+
+
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
@@ -15,12 +17,15 @@ module.exports = {
       },
       fontFamily: {
         'head': ['Zilla Slab', 'serif'],
-        'body': ['Open Sans', 'sans-serif'],
+        'halyard': ['Halyard Text', 'sans-serif'],
       },
       boxShadow: {
-        'dash': '0px 0.1px 0.3px rgba(0, 0, 0, 0.1), - 1px 1px 3px rgba(0, 0, 0, 0.15)'
+        'dash': '0px 0.1px 0.3px rgba(0, 0, 0, 0.1), - 1px 1px 3px rgba(0, 0, 0, 0.15)',
+        'table': '0px 0.1px 0.3px rgba(0, 0, 0, 0.1), -1px 1px 3px rgba(0, 0, 0, 0.15)'
       }
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/line-clamp'),
+  ],
 }

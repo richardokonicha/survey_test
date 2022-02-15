@@ -4,13 +4,13 @@ import useFetch from './components/useFetch';
 import Search from './components/Search';
 
 function App() {
-  const data = useFetch()
+  const { data, setSearchValue, setRatingFilter, ratingFilter } = useFetch()
   return (
     <div className='bg-background min-h-screen'>
       <Header />
-      <div className='mt-16 container mx-auto px-4 flex justify-center items-center min-h-fit '>
+      <div className='mt-8 container mx-auto px-4 flex justify-center items-center min-h-fit '>
         <div>
-          <Search />
+          <Search setSearchValue={setSearchValue} setRatingFilter={setRatingFilter} ratingFilter={ratingFilter} />
           {data && <Table data={data} />}
         </div>
       </div>

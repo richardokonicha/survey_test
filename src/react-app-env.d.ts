@@ -11,7 +11,7 @@ interface ItemProps {
     id: string
     email: string
     comment: string
-    rating: number
+    rating: string
     browser: BrowserProps
     computed_browser: ComputedBrowserProps
 }
@@ -29,33 +29,14 @@ interface ComputedBrowserProps {
     Browser: string
     Platform: string
     Vendor: string
+    Version: string
 }
 
 
-
-// {
-//     data.items.map((item: ItemProps, index: number) => (
-//         <tr key={index} className="bg-white border-b">
-//             <td className="py-4 px-6 text-sm font-medium  whitespace-nowrap">
-//                 {item.rating}
-//             </td>
-//             <td className="py-4 px-6 text-sm  whitespace-nowrap ">
-//                 {item.comment}
-//             </td>
-//             <td className="py-4 px-6 text-sm  whitespace-nowrap ">
-//                 <p>
-//                     {item.browser["appCodeName"]}
-//                 </p>
-//             </td>
-//             <td className="py-4 px-6 text-sm  whitespace-nowrap ">
-//                 {/* {item.device} */}mjk
-//             </td>
-//             <td className="py-4 px-6 text-sm  whitespace-nowrap ">
-//                 {/* {item.platform} */}jkjk
-//                 <h1>jkjk</h1>
-
-//             </td>
-//         </tr>
-
-//     ))
-// }
+// create a new type HTMLElementEvent that has a target of type you pass
+// type T must be a HTMLElement (e.g. HTMLTextAreaElement extends HTMLElement)
+type HTMLElementEvent<T extends MouseEvent> = Event & {
+    target: T;
+    // probably you might want to add the currentTarget as well
+    // currentTarget: T;
+}

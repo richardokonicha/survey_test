@@ -1,17 +1,38 @@
 
-// A custom hook that fetches data from the API
+// A custom hook that fetches data from the API and performs a search and filter operation
+
 import { useEffect, useState } from "react"
 
 const useFetch = () => {
-    const [data, setData] = useState<DataProps | null>(null)
+    const [rawData, setRawData] = useState<DataProps | null>(null)
+    const [search, setSearchValue] = useState('')
+    const [ratingFilter, setRatingFilter] = useState<string[]>([1, 2, 3, 4, 5].map(i => i.toString()))
+
+
+    const inputFilter = () => {
+        if (rawData === null) return null
+        let datacopy = rawData.items.slice()
+        let filteredData = datacopy.filter(
+            (item: ItemProps) => {
+                return (
+                    item.comment.toLowerCase().includes(search.toLowerCase())
+                    &&
+                    ratingFilter.includes(item.rating.toString())
+                )
+            }
+        )
+        return filteredData
+    }
+
     useEffect(
         () => {
             fetch('https://cache.usabilla.com/example/apidemo.json')
                 .then(res => res.json())
-                .then(data => setData(data))
+                .then(data => setRawData(data))
         }, []
     )
-    return data
-}
 
+
+    return { data: inputFilter(), setSearchValue, setRatingFilter, ratingFilter }
+}
 export default useFetch

@@ -1,8 +1,8 @@
 version: "3.8"
 services:
   app:
-    container_name: app-dev
-    image: app-dev
+    container_name: survey-monkey-test
+    image: survey-monkey-test
     build:
       context: ./
       dockerfile: Dockerfile

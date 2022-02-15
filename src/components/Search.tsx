@@ -1,24 +1,34 @@
 // The search and filter components html and tailwind
 
-const Search = () => {
-
+const Search = ({ setSearchValue, setRatingFilter, ratingFilter }: { setSearchValue: any, setRatingFilter: any, ratingFilter: string[] }) => {
+    const handleRatings = (e: any) => {
+        let value = e.target.value
+        if (ratingFilter.includes(value) === true) {
+            setRatingFilter(ratingFilter.filter((i: string) => i !== value))
+        } else {
+            setRatingFilter([...ratingFilter, value])
+        }
+    }
     return (
         <div className='flex'>
             <input type="text"
-                className=" mr-8 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 "
+                className=" mr-8  w-48 pl-10 p-1.5 bg-white border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-primary focus:border-primary block appearance-none leading-normal"
                 placeholder="Search here!"
+                onChange={(e) => setSearchValue(e.target.value)}
             ></input>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 font-xs">
                 {
-                    [1, 2, 3, 4, 5].map((item: number, index: number) => (
-                        <div className="bg-accent text-white rounded-full flex justify-center items-center w-8 h-8">
+                    ['1', '2', '3', '4', '5'].map((item: string, index: number) => (
+                        <button
+                            key={item}
+                            value={item}
+                            onClick={(e) => handleRatings(e)}
+                            className={`text-primary bg-white rounded-full flex justify-center items-center w-7 h-7 font-xs ${ratingFilter.includes(item) && 'bg-accent text-slate-50 '} hover:shadow-lg`}>
                             {item}
-                        </div>
+                        </button>
                     ))
                 }
-
             </div>
-
         </div>
     )
 }
