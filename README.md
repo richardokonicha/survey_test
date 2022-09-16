@@ -1,4 +1,7 @@
+
 # A Dashboard Table built with React
+
+Some of the tools used in this application
 * Create react app
 * React hooks
 * Custom hooks 
