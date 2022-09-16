@@ -1,4 +1,19 @@
+
 # A Dashboard Table built with React
+<<<<<<< HEAD
+=======
+
+Some of the tools used in this application
+* Create react app
+* React hooks
+* Custom hooks 
+* Typescript
+* Tailwind CSS 
+* React testing library
+* Mock Service Worker (mock testing)
+* Docker
+* Docker compose
+>>>>>>> 80608f579aa7dd6a30624d7d5b022bf8b30376c6
 
 - Create react app
 - React hooks
