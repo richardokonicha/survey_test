@@ -1,4 +1,5 @@
 // The Table component html and tailwind
+import type { ItemProps } from '../react-app-env';
 
 function Table({ data }: { data: ItemProps[] }) {
   return (
@@ -40,7 +41,7 @@ function Table({ data }: { data: ItemProps[] }) {
         </thead>
 
         <tbody className="overflow-scroll max-h-screen">
-          {data.map((item: ItemProps, index: number) => (
+          {data.map((item: ItemProps) => (
             <tr className="bg-white border-b hover:bg-slate-50 " key={item.id}>
               <td className="py-3 px-8 text-sm font-medium">
                 <div className="bg-accent  text-center text-white rounded-full flex justify-center items-center w-6 h-6">
@@ -60,8 +61,14 @@ function Table({ data }: { data: ItemProps[] }) {
                 </span>
               </td>
               <td className="sm:table-cell hidden antialiased text-xs py-3 px-8  whitespace-nowrap  text-center text-primary">
-                <h6> {item.computed_browser.Browser}</h6>
-                <h6> {item.computed_browser.Version}</h6>
+                <h6>
+                  {' '}
+                  {item.computed_browser.Browser}
+                </h6>
+                <h6>
+                  {' '}
+                  {item.computed_browser.Version}
+                </h6>
               </td>
               <td className="sm:table-cell hidden antialiased text-xs py-3 px-8  whitespace-nowrap  text-center text-primary">
                 {item.browser.platform}
