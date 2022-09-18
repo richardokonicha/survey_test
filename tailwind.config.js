@@ -9,17 +9,18 @@ module.exports = {
         background: '#E5E5E5',
         text: '#555B6E',
         accent: '#258060',
-        border: '#B8BBC6'
+        border: '#B8BBC6',
       },
       fontFamily: {
         head: ['Zilla Slab', 'serif'],
-        halyard: ['Halyard Text', 'sans-serif']
+        halyard: ['Halyard Text', 'sans-serif'],
       },
       boxShadow: {
         dash: '0px 0.1px 0.3px rgba(0, 0, 0, 0.1), - 1px 1px 3px rgba(0, 0, 0, 0.15)',
-        table: '0px 0.1px 0.3px rgba(0, 0, 0, 0.1), -1px 1px 3px rgba(0, 0, 0, 0.15)'
-      }
-    }
+        table: '0px 0.1px 0.3px rgba(0, 0, 0, 0.1), -1px 1px 3px rgba(0, 0, 0, 0.15)',
+      },
+    },
   },
-  plugins: [require('@tailwindcss/line-clamp')]
+  // eslint-disable-next-line global-require
+  plugins: [require('@tailwindcss/line-clamp')],
 };

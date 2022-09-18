@@ -4,6 +4,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from '../App';
 import Table from '../components/Table';
+import type { ItemProps } from '../react-app-env';
 
 const dummy: { items: ItemProps[] } = {
   items: [
@@ -13,14 +14,14 @@ const dummy: { items: ItemProps[] } = {
       computed_browser: {
         Browser: 'Chrome',
         Version: '32.0',
-        Platform: 'Win7'
+        Platform: 'Win7',
       },
       rating: '4',
       browser: {
-        platform: 'Chrome'
-      }
-    }
-  ]
+        platform: 'Chrome',
+      },
+    },
+  ],
 };
 
 describe('UI Healthy cheers', () => {
@@ -33,7 +34,7 @@ describe('UI Healthy cheers', () => {
     render(<Table data={dummy.items} />);
     expect(screen.getByText('Rating')).toBeInTheDocument();
     expect(
-      screen.getByText((content, element) => content.includes('dummy comment'), { exact: false })
+      screen.getByText((content) => content.includes('dummy comment'), { exact: false }),
     ).toBeInTheDocument();
   });
 });

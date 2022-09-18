@@ -2,8 +2,8 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 import { rest } from 'msw';
-import useFetch from '../components/useFetch';
 import { act } from 'react-dom/test-utils';
+import useFetch from '../components/useFetch';
 
 const dummy = {
   items: [
@@ -13,17 +13,15 @@ const dummy = {
         Browser: 'Chrome',
         Version: '32.0',
         Platform: 'Win7',
-        FullBrowser: 'Chrome'
+        FullBrowser: 'Chrome',
       },
-      rating: 4
-    }
-  ]
+      rating: 4,
+    },
+  ],
 };
 
 const server = setupServer(
-  rest.get('https://cache.usabilla.com/example/apidemo.json', (req, res, ctx) => {
-    return res(ctx.json(dummy));
-  })
+  rest.get('https://cache.usabilla.com/example/apidemo.json', (req, res, ctx) => res(ctx.json(dummy))),
 );
 
 beforeAll(() => server.listen());
@@ -34,7 +32,7 @@ describe('useFetch is getting healthy data', () => {
   it('Is Fetched Data valid', async () => {
     const { result, waitForNextUpdate } = renderHook(() => useFetch());
     await waitForNextUpdate();
-    let expected = dummy.items;
+    const expected = dummy.items;
     expect(result.current.data).toMatchObject(expected);
     expect(result.current.ratingFilter).toStrictEqual(['1', '2', '3', '4', '5']);
   });
