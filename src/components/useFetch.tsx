@@ -7,11 +7,8 @@ import type { DataProps, ItemProps } from '../react-app-env';
 const useFetch = () => {
   const [rawData, setRawData] = useState<DataProps | null>(null);
   const [search, setSearchValue] = useState<string>('');
-  // const [ratingFilter, setRatingFilter] = useState<string[]>(
-  //   [1, 2, 3, 4, 5].map((i) => i.toString()),
-  // );
   const [ratingFilter, setRatingFilter] = useState<string[]>(
-    ['1', '2', '3', '4', '5'],
+    [1, 2, 3, 4, 5].map((i) => i.toString()),
   );
   const inputFilter = () => {
     if (rawData === null) return null;
