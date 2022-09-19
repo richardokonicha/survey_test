@@ -1,0 +1,33 @@
+apiVersion: 2019-12-01
+location: westus
+name: surveyTableContainerGroup3
+properties:
+  containers:
+  - name: survey-app-v1
+    properties:
+      image: reechee/survey-monkey-test:v1
+      resources:
+        requests:
+          cpu: 1
+          memoryInGb: 1.5
+      ports:
+      - port: 80
+  osType: Linux
+  ipAddress:
+    type: public
+    ports:
+      - protocol: tcp
+        port: 80
+tags: {exampleTag: surveytable}
+type: Microsoft.ContainerInstance/containerGroups
+
+# az group create --name myResourceGroup --location eastus
+# az container create --resource-group survey-test-resource-group --file deploy-survey-aci.yaml
+# az container show --resource-group msdoctest_group --name myContainerGroup --output table
+# az acr build -t test/survey-monkey-test:{{.Run.ID}} -r surveytestregistry .
+
+# az login
+# az acr login --name myregistry
+
+# az container create --resource-group Flow --name flow-emulator --image <ContainerRegistry.azurecr.io>/emulator:tag --cpu 1 --memory 1 --registry-login-server <ContainerRegistry.azurecr.io> --registry-username <username> --registry-password <password> --dns-name-label flow-emulator-container --ports 80 --os-type windows
+
