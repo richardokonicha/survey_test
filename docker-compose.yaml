@@ -3,12 +3,12 @@ services:
   app:
     container_name: survey-monkey-test
     image: reechee/survey-monkey-test:v2
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./src:/app/src
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    # volumes:
+    #   - ./src:/app/src
     ports:
-      - 3000:3000
+      - 80:80
 
 
