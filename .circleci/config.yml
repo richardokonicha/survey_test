@@ -47,10 +47,16 @@ jobs:
       - run:
           name: Copy smoke tests to dummy container
           command: docker cp survey-smoke-tests/. survey-smoke-tests:/etc/newman
+      # - run:
+      #     name: Wait for service to be up
+      #     command: docker run --network container:survey-container jwilder/dockerize \
+      #       -wait http://localhost:8081/healthcheck -timeout 120s -wait-retry-interval 5s
       - run:
           name: Wait for service to be up
-          command: docker run --network container:survey-container jwilder/dockerize \
-              -wait http://localhost:8081/healthcheck -timeout 120s -wait-retry-interval 5s
+          command: |
+            docker run --network container:survey-container jwilder/dockerize \
+              -wait http://localhost:3000/healthcheck -timeout 120s -wait-retry-interval 5s
+
       - run:
           name: Run smoke tests
           command: docker run --network container:survey-container --volumes-from survey-smoke-tests \
@@ -64,3 +70,4 @@ workflows:
       - test:
           requires:
             - build
+
