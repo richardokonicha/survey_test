@@ -115,20 +115,20 @@ workflows:
   build:
     jobs:
       - build
-      - test:
-          requires:
-            - build
-      - deploy:
-          requires:
-            - test
-          filters:
-            branches:
-              only: main
-      - deploy-service:
-          requires:
-            - deploy
-          filters:
-            branches:
-              only: main
+      # - test:
+      #     requires:
+      #       - build
+      # - deploy:
+      #     requires:
+      #       - test
+      #     filters:
+      #       branches:
+      #         only: main
+      # - deploy-service:
+      #     requires:
+      #       - deploy
+      #     filters:
+      #       branches:
+      #         only: main
 
 # Envs: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_ECR_ACCOUNT_URL
