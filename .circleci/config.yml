@@ -55,7 +55,7 @@ jobs:
           name: Wait for service to be up
           command: |
             docker run --network container:survey-container jwilder/dockerize \
-              -wait http://localhost:3000/healthcheck -timeout 120s -wait-retry-interval 5s
+              -wait http://localhost:3000 -timeout 120s -wait-retry-interval 5s
 
       - run:
           name: Run smoke tests
