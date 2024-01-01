@@ -77,7 +77,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
-      # - setup_remote_docker
+      - setup_remote_docker
       - aws-ecr/build-and-push-image:
           account-url: "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
           repo: "${AWS_RESOURCE_NAME_PREFIX}"
