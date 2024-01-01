@@ -59,8 +59,8 @@ jobs:
 
       - run:
           name: Run smoke tests
-          command: docker run --network container:survey-container --volumes-from survey-smoke-tests \
-              -t postman/newman:4.4.0-alpine run survey-smoke-tests.postman_collection.json
+          command: docker run --network container:survey-container --volumes-from survey-smoke-tests -t postman/newman:4.4.0-alpine run survey-smoke-tests.postman_collection.json
+
 
 workflows:
   version: 2
