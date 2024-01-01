@@ -113,9 +113,15 @@ workflows:
       - test:
           requires:
             - build
-      - deploy:
-          requires:
-            - test
+      - aws-ecr/build-and-push-image:
+          repo: "${AWS_RESOURCE_NAME_PREFIX}"
+          tag: "latest,v0.1.${CIRCLE_SHA1}"
+          dockerfile: Dockerfile
+          path: .
+ 
+      # - deploy:
+      #     requires:
+      #       - test
           # filters:
           #   branches:
           #     only: main
