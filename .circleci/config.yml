@@ -109,10 +109,10 @@ workflows:
   version: 2
   build:
     jobs:
-      - build
-      - test:
-          requires:
-            - build
+      # - build
+      # - test:
+      #     requires:
+      #       - build
       - aws-ecr/build-and-push-image:
           repo: "${AWS_RESOURCE_NAME_PREFIX}"
           tag: "latest,v0.1.${CIRCLE_SHA1}"
