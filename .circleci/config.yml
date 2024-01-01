@@ -4,16 +4,6 @@ orbs:
   aws-ecr: circleci/aws-ecr@6.15.0
 
 executors:
-  aws-ecr-executor:
-    docker:
-      - image: circleci/aws-ecr:6.15.0
-    environment:
-      AWS_ACCESS_KEY_ID: AWS_ACCESS_KEY_ID
-      AWS_SECRET_ACCESS_KEY: AWS_SECRET_ACCESS_KEY
-      AWS_REGION: AWS_REGION
-      AWS_RESOURCE_NAME_PREFIX: AWS_RESOURCE_NAME_PREFIX
-      AWS_ACCOUNT_ID: AWS_ACCOUNT_ID
-
   docker-executor:
     docker:
       - image: circleci/node:14.17.0-buster
@@ -21,6 +11,11 @@ executors:
       IMAGE_NAME: richardokonicha/survey
       IMAGE_TAG: latest
       DOCKERFILE_PATH: .
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
+      AWS_RESOURCE_NAME_PREFIX: ${AWS_RESOURCE_NAME_PREFIX}
+      AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}
 
 jobs:
   build:
@@ -121,9 +116,9 @@ workflows:
       - deploy:
           requires:
             - test
-          filters:
-            branches:
-              only: main
+          # filters:
+          #   branches:
+          #     only: main
       # - deploy-service:
       #     requires:
       #       - deploy
