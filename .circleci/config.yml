@@ -1,5 +1,19 @@
 version: 2.1
+
+orbs:
+  aws-ecr: circleci/aws-ecr@6.15.0
+
 executors:
+  aws-ecr-executor:
+    docker:
+      - image: circleci/aws-ecr:6.15.0
+    environment:
+      AWS_ACCESS_KEY_ID: AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: AWS_SECRET_ACCESS_KEY
+      AWS_REGION: AWS_REGION
+      AWS_RESOURCE_NAME_PREFIX: AWS_RESOURCE_NAME_PREFIX
+      AWS_ACCOUNT_ID: AWS_ACCOUNT_ID
+
   docker-executor:
     docker:
       - image: circleci/node:14.17.0-buster
@@ -7,6 +21,7 @@ executors:
       IMAGE_NAME: richardokonicha/survey
       IMAGE_TAG: latest
       DOCKERFILE_PATH: .
+
 jobs:
   build:
     executor: docker-executor
@@ -26,6 +41,7 @@ jobs:
           root: .
           paths:
             - ./*.tar
+
   test:
     executor: docker-executor
     steps:
@@ -54,6 +70,46 @@ jobs:
       - run:
           name: Run smoke tests
           command: docker run --network container:survey-container --volumes-from survey-smoke-tests -t postman/newman:4.4.0-alpine run postman_collection.json
+      - store_artifacts:
+          path: tmp/test-results/
+          destination: test-results
+      - store_test_results:
+          path: tmp/test-results/
+
+  deploy:
+    executor: aws-ecr-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      # - setup_remote_docker
+      - aws-ecr/build-and-push-image:
+          account-url: "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+          repo: "${AWS_RESOURCE_NAME_PREFIX}"
+          region: ${AWS_REGION}
+          tag: "${CIRCLE_SHA1}"
+          requires:
+            - test
+
+  deploy-service:
+    executor: aws-ecr-executor
+    steps:
+      - checkout
+      - aws-ecs/deploy-service-update:
+          aws-region: ${AWS_REGION}
+          family: "${AWS_RESOURCE_NAME_PREFIX}-service"
+          cluster-name: "${AWS_RESOURCE_NAME_PREFIX}-cluster"
+          container-image-name-updates: "container=${AWS_RESOURCE_NAME_PREFIX}-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_RESOURCE_NAME_PREFIX}:${CIRCLE_SHA1}"
+          verify-revision-is-deployed: true
+          post-steps:
+            - run:
+                name: Test the deployment
+                command: |
+                  TARGET_GROUP_ARN=$(aws ecs describe-services --cluster ${AWS_RESOURCE_NAME_PREFIX}-cluster --services ${AWS_RESOURCE_NAME_PREFIX}-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
+                  ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
+                  ELB_DNS_NAME=$(aws elbv2 describe-load-balancers --load-balancer-arns $ELB_ARN | jq -r '.LoadBalancers[0].DNSName')
+                  curl -s --retry 10 http://$ELB_DNS_NAME | grep "Welcome to Dashboard!"
+
 workflows:
   version: 2
   build:
@@ -62,3 +118,17 @@ workflows:
       - test:
           requires:
             - build
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
+      - deploy-service:
+          requires:
+            - deploy
+          filters:
+            branches:
+              only: main
+
+# Envs: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_ECR_ACCOUNT_URL
