@@ -77,7 +77,7 @@ jobs:
           path: tmp/test-results/
 
   deploy:
-    executor: aws-ecr-executor
+    executor: docker-executor
     steps:
       - checkout
       - attach_workspace:
@@ -118,12 +118,12 @@ workflows:
       - test:
           requires:
             - build
-      # - deploy:
-      #     requires:
-      #       - test
-      #     filters:
-      #       branches:
-      #         only: main
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
       # - deploy-service:
       #     requires:
       #       - deploy
