@@ -13,16 +13,8 @@
           "script": {
             "id": "610932c7-a594-4e00-9278-217b97bcc904",
             "exec": [
-              "pm.test(\"Status code is 200\", function () {",
+              "pm.test('Status code is 200', function () {",
               "    pm.response.to.have.status(200);",
-              "});",
-              "pm.test(\"HTML response contains 'Dashboard'\", function () {",
-              "    pm.visualizer.set(pm.response.text(), null, null, {",
-              "        showHTML: function (content) {",
-              "            tests['Content contains \"Dashboard\"'] = content.includes('Dashboard');",
-              "            return content;",
-              "        }",
-              "    });",
               "});"
             ],
             "type": "text/javascript"

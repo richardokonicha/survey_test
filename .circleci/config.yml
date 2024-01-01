@@ -18,15 +18,14 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker build -t richardokonicha/survey:latest .
+            docker build -t $IMAGE_NAME:$IMAGE_TAG .
       - run:
           name: Cache Docker image
-          command: docker save -o latest.tar richardokonicha/survey
+          command: docker save -o $IMAGE_TAG.tar $IMAGE_NAME
       - persist_to_workspace:
           root: .
           paths:
             - ./*.tar
-
   test:
     executor: docker-executor
     steps:
@@ -37,31 +36,24 @@ jobs:
       - run:
           name: Load cached Docker image
           command: |
-            docker load -i /tmp/workspace/latest.tar
+            docker load -i /tmp/workspace/$IMAGE_TAG.tar
       - run:
           name: Start survey container
-          command: docker run -d --name survey-container richardokonicha/survey:latest
+          command: docker run -d --name survey-container $IMAGE_NAME:$IMAGE_TAG
       - run:
           name: Create dummy container for smoke tests
           command: docker create -v /etc/newman --name survey-smoke-tests alpine:3.4 /bin/true
       - run:
           name: Copy smoke tests to dummy container
           command: docker cp survey-smoke-tests/. survey-smoke-tests:/etc/newman
-      # - run:
-      #     name: Wait for service to be up
-      #     command: docker run --network container:survey-container jwilder/dockerize \
-      #       -wait http://localhost:8081/healthcheck -timeout 120s -wait-retry-interval 5s
       - run:
           name: Wait for service to be up
           command: |
             docker run --network container:survey-container jwilder/dockerize \
               -wait http://localhost:3000 -timeout 120s -wait-retry-interval 5s
-
       - run:
           name: Run smoke tests
-          command: docker run --network container:survey-container --volumes-from survey-smoke-tests -t postman/newman:4.4.0-alpine run survey-smoke-tests.postman_collection.json
-
-
+          command: docker run --network container:survey-container --volumes-from survey-smoke-tests -t postman/newman:4.4.0-alpine run postman_collection.json
 workflows:
   version: 2
   build:
@@ -70,4 +62,3 @@ workflows:
       - test:
           requires:
             - build
-
