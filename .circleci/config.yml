@@ -1,33 +1,81 @@
 version: 2.1
-orbs:
-  node: circleci/node@4.1.0
+
+executors:
+  
+  docker-executor:
+    docker:
+      - image: circleci/node:14.17.0-buster
+    environment:
+      IMAGE_NAME: $IMAGE_NAME:$IMAGE_TAG
+      IMAGE_TAG: latest
+      DOCKERFILE_PATH: .
+
 jobs:
-  test:
-    executor:
-      name: node/default
-    steps:
-      - checkout
-      - node/install-packages:
-           pkg-manager: npm
-      - run:
-          name: Run tests
-          command: npm test
-          
   build:
-    executor:
-      name: node/default
+    
+    executor: docker-executor
     steps:
       - checkout
-      - node/install-packages
+      - restore_cache:
+          key: node-v1-{{ checksum "package-lock.json" }}
       - run:
-          name: Build
+          name: Build and test
           command: npm run build
+      - save_cache:
+          key: node-v1-{{ checksum "package-lock.json" }}
+          paths:
+            - ./node_modules
+      - store_test_results:
+          path: build/test-results/
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: |
+            docker build -t $IMAGE_NAME:$IMAGE_TAG $DOCKERFILE_PATH
+      - run:
+          name: Cache Docker image
+          command: docker save -o $IMAGE_TAG.tar $IMAGE_NAME
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./*.tar
+
+  test:
+    docker:
+      - image: circleci/node:14.17.0
+    executor: docker-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+      - run:
+          name: Load cached Docker image
+          command: |
+            docker load -i /tmp/workspace/$IMAGE_TAG.tar
+      - run:
+          name: Start survey container
+          command: docker run -d --name survey-container $IMAGE_NAME:$IMAGE_TAG
+      - run:
+          name: Create dummy container for smoke tests
+          command: docker create -v /etc/newman --name survey-smoke-tests alpine:3.4 /bin/true
+      - run:
+          name: Copy smoke tests to dummy container
+          command: docker cp survey-smoke-tests/. survey-smoke-tests:/etc/newman
+      - run:
+          name: Wait for service to be up
+          command: docker run --network container:survey-container jwilder/dockerize \
+              -wait http://localhost:8081/healthcheck -timeout 120s -wait-retry-interval 5s
+      - run:
+          name: Run smoke tests
+          command: docker run --network container:survey-container --volumes-from survey-smoke-tests \
+              -t postman/newman:4.4.0-alpine run survey-smoke-tests.postman_collection.json
 
 workflows:
-  node-tests:
+  version: 2
+  build:
     jobs:
-      - test
-      - build:
+      - build
+      - test:
           requires:
-            - test
-      
+            - build
