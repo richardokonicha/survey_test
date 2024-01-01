@@ -115,15 +115,15 @@ workflows:
   build:
     jobs:
       - build
-      # - test:
-      #     requires:
-      #       - build
-      # - deploy:
-      #     requires:
-      #       - test
-      #     filters:
-      #       branches:
-      #         only: main
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
       # - deploy-service:
       #     requires:
       #       - deploy
