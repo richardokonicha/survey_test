@@ -83,11 +83,17 @@ jobs:
       - run:
           name: Push Docker image to ECR
           command: |
-            pip install awscli --upgrade
+            pip3 install --user awscli --upgrade
             aws --version
             aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 709323121715.dkr.ecr.eu-north-1.amazonaws.com
+      - run:
+          name: AWS Ready
+          command: echo "Job completed successfully! Image pushed to $AWS_ECR_ACCOUNT_URL/$IMAGE_NAME:$IMAGE_TAG"
 
-            docker load -i /tmp/workspace/$IMAGE_TAG.tar
+      - run:
+          name: AWS Repo
+          command: |
+            docker load -i /tmp/workspace/$latest.tar
             docker tag $IMAGE_NAME:$IMAGE_TAG $AWS_ECR_ACCOUNT_URL/$IMAGE_NAME:$IMAGE_TAG
             docker push $AWS_ECR_ACCOUNT_URL/$IMAGE_NAME:$IMAGE_TAG
 
