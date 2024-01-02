@@ -8,11 +8,16 @@ executors:
       IMAGE_NAME: richardokonicha/survey
       IMAGE_TAG: latest
       DOCKERFILE_PATH: .
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_REGION: ${AWS_REGION}
-      AWS_RESOURCE_NAME_PREFIX: ${AWS_RESOURCE_NAME_PREFIX}
-      AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}
+
+  python-base:
+    docker:
+      - image: circleci/python:3.8.0-buster
+    # environment:
+    #   - AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+    #   - AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    #   - AWS_REGION: ${AWS_REGION}
+    #   - AWS_RESOURCE_NAME_PREFIX: ${AWS_RESOURCE_NAME_PREFIX}
+    #   - AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}
 
 jobs:
   build:
@@ -69,7 +74,7 @@ jobs:
           path: tmp/test-results/
 
   deploy:
-    executor: docker-executor
+    executor: python-base
     steps:
       - checkout
       - attach_workspace:
@@ -78,7 +83,7 @@ jobs:
       - run:
           name: Push Docker image to ECR
           command: |
-            pip3 install awscli --upgrade
+            pip install awscli --upgrade
             aws --version
             aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 709323121715.dkr.ecr.eu-north-1.amazonaws.com
 
