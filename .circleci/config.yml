@@ -146,10 +146,10 @@ workflows:
     jobs:
       - aws-ecr/build-and-push-image:
           attach_workspace: true
+          account_id: ${AWS_ACCOUNT_ID}
           auth:
             - aws-cli/setup:
                 role_arn: arn:aws:iam::123456789012
-          context: aws-dev
           create-repo: true
           dockerfile: Dockerfile
           path: workspace
