@@ -85,9 +85,12 @@ jobs:
           name: AWS Repo
           command: |
             docker load -i /tmp/workspace/$IMAGE_TAG.tar
-            docker tag $IMAGE_NAME:$IMAGE_TAG $AWS_ECR_ACCOUNT_URL/$IMAGE_NAME:$IMAGE_TAG
-            docker push $AWS_ECR_ACCOUNT_URL/$IMAGE_NAME:$IMAGE_TAG
-
+            docker tag $IMAGE_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:$IMAGE_TAG
+      - run:
+          name: Docker Push
+          command: |
+            docker ls
+            docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:$IMAGE_TAG
       - run:
           name: Print Job Complete
           command: echo "Job completed successfully! Image pushed to $AWS_ECR_ACCOUNT_URL/$IMAGE_NAME:$IMAGE_TAG"
