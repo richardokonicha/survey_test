@@ -11,3 +11,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.env
+infrastructure/.terraform/
+infrastructure/.terraform.lock.hcl
+infrastructure/.terraform_version
+infrastructure/terraform.tfstate
+infrastructure/terraform.tfstate.backup
+.env
