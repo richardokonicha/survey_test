@@ -84,7 +84,7 @@ jobs:
       - run:
           name: AWS Repo
           command: |
-            docker load -i /tmp/workspace/$latest.tar
+            docker load -i /tmp/workspace/$IMAGE_TAG.tar
             docker tag $IMAGE_NAME:$IMAGE_TAG $AWS_ECR_ACCOUNT_URL/$IMAGE_NAME:$IMAGE_TAG
             docker push $AWS_ECR_ACCOUNT_URL/$IMAGE_NAME:$IMAGE_TAG
 
@@ -96,14 +96,13 @@ workflows:
   version: 2
   build:
     jobs:
-      # - build
+      - build
       # - test:
       #     requires:
       #       - build
-
-      - deploy
-          # requires:
-          #   - test
+      - deploy:
+          requires:
+            - build
           # filters:
           #   branches:
           #     only: main
