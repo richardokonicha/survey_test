@@ -1,136 +1,179 @@
+# version: 2.1
+
+# orbs:
+#   aws-ecr: circleci/aws-ecr@6.15.0
+
+# executors:
+#   docker-executor:
+#     docker:
+#       - image: circleci/node:14.17.0-buster
+#     environment:
+#       IMAGE_NAME: richardokonicha/survey
+#       IMAGE_TAG: latest
+#       DOCKERFILE_PATH: .
+#       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+#       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+#       AWS_REGION: ${AWS_REGION}
+#       AWS_RESOURCE_NAME_PREFIX: ${AWS_RESOURCE_NAME_PREFIX}
+#       AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}
+
+# jobs:
+#   build:
+#     executor: docker-executor
+#     steps:
+#       - checkout
+#       - store_test_results:
+#           path: build/test-results/
+#       - setup_remote_docker
+#       - run:
+#           name: Build Docker image
+#           command: |
+#             docker build -t $IMAGE_NAME:$IMAGE_TAG .
+#       - run:
+#           name: Cache Docker image
+#           command: docker save -o $IMAGE_TAG.tar $IMAGE_NAME
+#       - persist_to_workspace:
+#           root: .
+#           paths:
+#             - ./*.tar
+
+#   test:
+#     executor: docker-executor
+#     steps:
+#       - checkout
+#       - attach_workspace:
+#           at: /tmp/workspace
+#       - setup_remote_docker
+#       - run:
+#           name: Load cached Docker image
+#           command: |
+#             docker load -i /tmp/workspace/$IMAGE_TAG.tar
+#       - run:
+#           name: Start survey container
+#           command: docker run -d --name survey-container $IMAGE_NAME:$IMAGE_TAG
+#       - run:
+#           name: Create dummy container for smoke tests
+#           command: docker create -v /etc/newman --name survey-smoke-tests alpine:3.4 /bin/true
+#       - run:
+#           name: Copy smoke tests to dummy container
+#           command: docker cp survey-smoke-tests/. survey-smoke-tests:/etc/newman
+#       - run:
+#           name: Wait for service to be up
+#           command: |
+#             docker run --network container:survey-container jwilder/dockerize \
+#               -wait http://localhost:3000 -timeout 120s -wait-retry-interval 5s
+#       - run:
+#           name: Run smoke tests
+#           command: docker run --network container:survey-container --volumes-from survey-smoke-tests -t postman/newman:4.4.0-alpine run postman_collection.json
+#       - store_artifacts:
+#           path: tmp/test-results/
+#           destination: test-results
+#       - store_test_results:
+#           path: tmp/test-results/
+
+#   deploy:
+#     executor: docker-executor
+#     steps:
+#       - checkout
+#       - attach_workspace:
+#           at: /tmp/workspace
+#       - setup_remote_docker
+#       - aws-ecr/build-and-push-image:
+#           account-url: "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+#           repo: "${AWS_RESOURCE_NAME_PREFIX}"
+#           region: ${AWS_REGION}
+#           tag: "${CIRCLE_SHA1}"
+#           requires:
+#             - test
+
+#   deploy-service:
+#     executor: aws-ecr-executor
+#     steps:
+#       - checkout
+#       - aws-ecs/deploy-service-update:
+#           aws-region: ${AWS_REGION}
+#           family: "${AWS_RESOURCE_NAME_PREFIX}-service"
+#           cluster-name: "${AWS_RESOURCE_NAME_PREFIX}-cluster"
+#           container-image-name-updates: "container=${AWS_RESOURCE_NAME_PREFIX}-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_RESOURCE_NAME_PREFIX}:${CIRCLE_SHA1}"
+#           verify-revision-is-deployed: true
+#           post-steps:
+#             - run:
+#                 name: Test the deployment
+#                 command: |
+#                   TARGET_GROUP_ARN=$(aws ecs describe-services --cluster ${AWS_RESOURCE_NAME_PREFIX}-cluster --services ${AWS_RESOURCE_NAME_PREFIX}-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
+#                   ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
+#                   ELB_DNS_NAME=$(aws elbv2 describe-load-balancers --load-balancer-arns $ELB_ARN | jq -r '.LoadBalancers[0].DNSName')
+#                   curl -s --retry 10 http://$ELB_DNS_NAME | grep "Welcome to Dashboard!"
+
+# workflows:
+#   version: 2
+#   build:
+#     jobs:
+#       # - build
+#       # - test:
+#       #     requires:
+#       #       - build
+#       - aws-ecr/build-and-push-image:
+#           resource_class: large
+#           repo: "${AWS_RESOURCE_NAME_PREFIX}"
+#           tag: "latest,v0.1.${CIRCLE_SHA1}"
+#           dockerfile: Dockerfile
+#           path: .
+ 
+#       # - deploy:
+#       #     requires:
+#       #       - test
+#           # filters:
+#           #   branches:
+#           #     only: main
+#       # - deploy-service:
+#       #     requires:
+#       #       - deploy
+#       #     filters:
+#       #       branches:
+#       #         only: main
+
+# # Envs: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_ECR_ACCOUNT_URL
 version: 2.1
 
-orbs:
-  aws-ecr: circleci/aws-ecr@6.15.0
-
-executors:
-  docker-executor:
-    docker:
-      - image: circleci/node:14.17.0-buster
-    environment:
-      IMAGE_NAME: richardokonicha/survey
-      IMAGE_TAG: latest
-      DOCKERFILE_PATH: .
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_REGION: ${AWS_REGION}
-      AWS_RESOURCE_NAME_PREFIX: ${AWS_RESOURCE_NAME_PREFIX}
-      AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}
-
 jobs:
-  build:
-    executor: docker-executor
-    steps:
-      - checkout
-      - store_test_results:
-          path: build/test-results/
-      - setup_remote_docker
-      - run:
-          name: Build Docker image
-          command: |
-            docker build -t $IMAGE_NAME:$IMAGE_TAG .
-      - run:
-          name: Cache Docker image
-          command: docker save -o $IMAGE_TAG.tar $IMAGE_NAME
-      - persist_to_workspace:
-          root: .
-          paths:
-            - ./*.tar
+  build-and-push:
+    docker:
+      - image: circleci/python:3.8
 
-  test:
-    executor: docker-executor
     steps:
       - checkout
-      - attach_workspace:
-          at: /tmp/workspace
-      - setup_remote_docker
-      - run:
-          name: Load cached Docker image
-          command: |
-            docker load -i /tmp/workspace/$IMAGE_TAG.tar
-      - run:
-          name: Start survey container
-          command: docker run -d --name survey-container $IMAGE_NAME:$IMAGE_TAG
-      - run:
-          name: Create dummy container for smoke tests
-          command: docker create -v /etc/newman --name survey-smoke-tests alpine:3.4 /bin/true
-      - run:
-          name: Copy smoke tests to dummy container
-          command: docker cp survey-smoke-tests/. survey-smoke-tests:/etc/newman
-      - run:
-          name: Wait for service to be up
-          command: |
-            docker run --network container:survey-container jwilder/dockerize \
-              -wait http://localhost:3000 -timeout 120s -wait-retry-interval 5s
-      - run:
-          name: Run smoke tests
-          command: docker run --network container:survey-container --volumes-from survey-smoke-tests -t postman/newman:4.4.0-alpine run postman_collection.json
-      - store_artifacts:
-          path: tmp/test-results/
-          destination: test-results
-      - store_test_results:
-          path: tmp/test-results/
 
-  deploy:
-    executor: docker-executor
-    steps:
-      - checkout
-      - attach_workspace:
-          at: /tmp/workspace
-      - setup_remote_docker
-      - aws-ecr/build-and-push-image:
-          account-url: "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-          repo: "${AWS_RESOURCE_NAME_PREFIX}"
-          region: ${AWS_REGION}
-          tag: "${CIRCLE_SHA1}"
-          requires:
-            - test
+      # Set up AWS CLI with credentials
+      - run:
+          name: Configure AWS CLI
+          command: |
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+            aws configure set default.region $AWS_REGION
 
-  deploy-service:
-    executor: aws-ecr-executor
-    steps:
-      - checkout
-      - aws-ecs/deploy-service-update:
-          aws-region: ${AWS_REGION}
-          family: "${AWS_RESOURCE_NAME_PREFIX}-service"
-          cluster-name: "${AWS_RESOURCE_NAME_PREFIX}-cluster"
-          container-image-name-updates: "container=${AWS_RESOURCE_NAME_PREFIX}-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_RESOURCE_NAME_PREFIX}:${CIRCLE_SHA1}"
-          verify-revision-is-deployed: true
-          post-steps:
-            - run:
-                name: Test the deployment
-                command: |
-                  TARGET_GROUP_ARN=$(aws ecs describe-services --cluster ${AWS_RESOURCE_NAME_PREFIX}-cluster --services ${AWS_RESOURCE_NAME_PREFIX}-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
-                  ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
-                  ELB_DNS_NAME=$(aws elbv2 describe-load-balancers --load-balancer-arns $ELB_ARN | jq -r '.LoadBalancers[0].DNSName')
-                  curl -s --retry 10 http://$ELB_DNS_NAME | grep "Welcome to Dashboard!"
+      # Authenticate Docker to AWS ECR
+      - run:
+          name: Authenticate Docker to AWS ECR
+          command: |
+            aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+
+      # Build and tag the Docker image
+      - run:
+          name: Build and tag Docker image
+          command: |
+            docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$CIRCLE_SHA1 .
+            docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$CIRCLE_SHA1 $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:latest
+
+      # Push Docker image to AWS ECR
+      - run:
+          name: Push Docker image to AWS ECR
+          command: |
+            docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$CIRCLE_SHA1
+            docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:latest
 
 workflows:
   version: 2
   build:
     jobs:
-      # - build
-      # - test:
-      #     requires:
-      #       - build
-      - aws-ecr/build-and-push-image:
-          resource_class: large
-          repo: "${AWS_RESOURCE_NAME_PREFIX}"
-          tag: "latest,v0.1.${CIRCLE_SHA1}"
-          dockerfile: Dockerfile
-          path: .
- 
-      # - deploy:
-      #     requires:
-      #       - test
-          # filters:
-          #   branches:
-          #     only: main
-      # - deploy-service:
-      #     requires:
-      #       - deploy
-      #     filters:
-      #       branches:
-      #         only: main
-
-# Envs: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_ECR_ACCOUNT_URL
+      - build-and-push
