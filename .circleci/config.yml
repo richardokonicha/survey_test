@@ -12,12 +12,12 @@ executors:
   python-base:
     docker:
       - image: circleci/python:3.8.0-buster
-    # environment:
-    #   - AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-    #   - AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-    #   - AWS_REGION: ${AWS_REGION}
-    #   - AWS_RESOURCE_NAME_PREFIX: ${AWS_RESOURCE_NAME_PREFIX}
-    #   - AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
+      AWS_RESOURCE_NAME_PREFIX: ${AWS_RESOURCE_NAME_PREFIX}
+      AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}
 
 jobs:
   build:
