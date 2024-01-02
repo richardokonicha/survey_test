@@ -58,6 +58,9 @@ jobs:
       - run:
           name: Run smoke tests
           command: docker run --network container:survey-container --volumes-from survey-smoke-tests -t postman/newman:4.4.0-alpine run postman_collection.json
+      - run:
+          name: Notify Ntfy.sh
+          command: curl -d "Test smoke test completed" ntfy.sh/pico
       - store_artifacts:
           path: tmp/test-results/
           destination: test-results
@@ -92,6 +95,9 @@ jobs:
             docker image ls
             docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:$IMAGE_TAG
       - run:
+          name: Notify Ntfy.sh
+          command: curl -d "Job completed successfully! Image pushed to $AWS_ECR_ACCOUNT_URL/$IMAGE_NAME:$IMAGE_TAG" ntfy.sh/pico
+      - run:
           name: Print Job Complete
           command: echo "Job completed successfully! Image pushed to $AWS_ECR_ACCOUNT_URL/$IMAGE_NAME:$IMAGE_TAG"
 
@@ -100,13 +106,13 @@ workflows:
   build:
     jobs:
       - build
-      # - test:
-      #     requires:
-      #       - build
-      - deploy:
+      - test:
           requires:
             - build
-          # filters:
-          #   branches:
-          #     only: main
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
 
