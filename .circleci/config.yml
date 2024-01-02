@@ -89,7 +89,7 @@ jobs:
       - run:
           name: Docker Push
           command: |
-            docker ls
+            docker image ls
             docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:$IMAGE_TAG
       - run:
           name: Print Job Complete
